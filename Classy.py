@@ -149,7 +149,7 @@ def main(page: ft.Page):
             print("JavaScript 注入失败:", ex)
 
     webview = fwv.WebView(
-        url="https://example.com",
+        url="https://yiban.gxnu.edu.cn/yzdx/dean/course",
         expand=True,
         on_page_ended=on_page_ended,
     )
