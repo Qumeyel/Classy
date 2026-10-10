@@ -168,11 +168,11 @@ def main(page: ft.Page):
     )
 
     #暗黑模式整体应用的颜色切换，同事要观察用户的状态切换（说白了防手贱，一般用不到但还是考虑的多点比较好）（嘻嘻）
-    #先试试，有问题再改（上一次漏拷进来一行，抱歉哈）（？抄串值啦？？）
+    #先试试，有问题再改（上一次漏拷进来一行，抱歉哈）（？抄串值啦？？）（我去改变量只改一个的来了）
     is_dark = page.platform_brightness == ft.Brightness.DARK
     page.bgcolor = "#121212" if is_dark else "#f8fafc"
     def on_brightness_change(e):
-        is_dark_now = page.platform_brightness == ft.PlatformBrightness.DARK
+        is_dark_now = page.platform_brightness == ft.Brightness.DARK
         page.bgcolor = "#121212" if is_dark_now else "#f8fafc"
         # 如果需要，也可以在这里重新向 WebView 注入 JS
         # await webview.run_javascript(...)
