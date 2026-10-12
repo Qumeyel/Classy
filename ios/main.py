@@ -1,28 +1,163 @@
-
 import flet as ft
 import flet_webview as fwv
-
 
 def main(page: ft.Page):
     page.padding = 0
     page.spacing = 0
 
-    async def on_page_ended(e):
-        js_code = r"""
+    async def JS_Injector(e):
+        JS_Code = r"""
         (() => {
-            //关闭ios弹性滚动
+            //关闭ios越界滑动
             document.documentElement.style.overscrollBehavior = "none";
             document.body.style.overscrollBehavior = "none";
-            // 清理上一次注入的监听器
-            if (window.__kebiaoCleanup) {
-                window.__kebiaoCleanup();
+            //清除上次的监视器
+            if (window._ListenerCleanup) {
+                window._ListenerCleanup();
             }
-
-            const media = window.matchMedia(
+            //判断浏览器深浅色
+            const IsDarkTheme = window.matchMedia(
                 "(prefers-color-scheme: dark)"
             );
 
-            const lessons = {
+            //深浅色模式切换
+            function applyTheme() {
+                const dark = IsDarkTheme.matches;
+                //主界面
+                const app = document.querySelector("#app");
+                if (app) {
+                    app.style.setProperty(
+                    "background-color",
+                    dark ? "#121212" : "#f8fafc",
+                    "important"
+                    );
+
+                    app.style.setProperty(
+                    "color",
+                    dark ? "#e0e0e0" : "#111827",
+                    "important"
+                    );
+                }
+                //课程详情界面
+                const popup = document.querySelector(".van-popup");
+                if (popup) {
+                    popup.style.setProperty(
+                    "background-color",
+                    dark ? "#121212" : "#ffffff",
+                    "important"
+                    );
+
+                    // 同时修改内部文字元素的颜色
+                    popup.querySelectorAll("*").forEach(child => {
+                        child.style.setProperty(
+                        "color",
+                        dark ? "#e0e0e0" : "#111827",
+                        "important"
+                    );
+                    });
+                }
+                const skeleton = document.querySelector(".van-skeleton-paragraph");
+                if (skeleton) {
+                    skeleton.style.setProperty(
+                    "background-color",
+                    dark ? "#333333" : "#eeeeee",
+                    "important"
+                    );
+                }
+                const cellGroup = document.querySelector(".van-cell-group");
+
+                if (cellGroup) {
+                
+                    cellGroup.style.setProperty(
+                    "background-color",
+                    dark ? "#121212" : "#ffffff",
+                    "important"
+                    );
+
+                    const vanCells = cellGroup.querySelectorAll(".van-cell");
+
+                    vanCells.forEach(element => {
+                        element.style.setProperty(
+                            "background-color",
+                            dark ? "#121212" : "#ffffff",
+                            "important"
+                        );
+
+                        element.style.setProperty(
+                        "color",
+                        dark ? "#e0e0e0" : "#111827",
+                        "important"
+                        );
+                    });
+                }
+
+                const backbutton = document.querySelector(".van-button--default");
+                if(backbutton){
+                    backbutton.style.setProperty(
+                    "background-color",
+                    dark ? "#121212" : "#ffffff",
+                    "important"
+                    );
+
+                    backbutton.style.setProperty(
+                    "color",
+                    dark ? "#e0e0e0" : "#111827",
+                    "important"
+                    );
+                }
+                //教学周选择界面
+                const van_action_sheet__content = document.querySelector(".van-action-sheet__content");
+                if (van_action_sheet__content) {
+                    const item = van_action_sheet__content.querySelectorAll(".van-action-sheet__item");
+
+                    item.forEach(element => {
+                        element.style.setProperty(
+                            "background-color",
+                            dark ? "#121212" : "#ffffff",
+                            "important"
+                        );
+
+                        element.style.setProperty(
+                        "color",
+                        dark ? "#e0e0e0" : "#111827",
+                        "important"
+                        );
+                        // 同时修改内部文字元素的颜色
+                        element.querySelectorAll("*").forEach(child => {
+                            child.style.setProperty(
+                                "color",
+                                dark ? "#e0e0e0" : "#111827",
+                                "important"
+                            );
+                        });
+                    });
+                }
+                const cancelbutton = document.querySelector(".van-action-sheet__cancel");
+                if(cancelbutton){
+                    cancelbutton.style.setProperty(
+                    "background-color",
+                    dark ? "#121212" : "#ffffff",
+                    "important"
+                    );
+
+                    cancelbutton.style.setProperty(
+                    "color",
+                    dark ? "#e0e0e0" : "#111827",
+                    "important"
+                    );
+                }
+
+                const sheet__gap = document.querySelector(".van-action-sheet__gap");
+                if(sheet__gap){
+                    sheet__gap.style.setProperty(
+                    "background-color",
+                    dark ? "#121212" : "#ffffff",
+                    "important"
+                    );
+                }              
+            }
+
+            const Lessons = {
                 "1": "第1节<br>8:20<br>开始",
                 "2": "第2节<br>9:40<br>结束",
                 "3": "第3节<br>9:50-10:30",
@@ -37,83 +172,25 @@ def main(page: ft.Page):
                 "12": "第12节<br>20:50-21:30"
             };
 
-            const selector =
-                ".flex.items-center.justify-center.min-h-10";
-
-            function applyTheme() {
-                const app = document.querySelector("#app");
-
-                // 同时设置网页主题标记
-                document.documentElement.dataset.theme =
-                    media.matches ? "dark" : "light";
-
-                document.documentElement.style.colorScheme =
-                    media.matches ? "dark" : "light";
-
-                if (!app) return;
-
-                app.style.setProperty(
-                    "background-color",
-                    media.matches ? "#121212" : "#f8fafc",
-                    "important"
-                );
-
-                app.style.setProperty(
-                    "color",
-                    media.matches ? "#e0e0e0" : "#111827",
-                    "important"
-                );
-            }
+            const selector = ".flex.items-center.justify-center.min-h-10";
 
             function replaceLessons() {
-                const elements =
-                    document.querySelectorAll(selector);
+                const elements = document.querySelectorAll(selector);
 
-                let changed = 0;
-
-                elements.forEach(element => {
-                    const text = element.textContent.trim();
-
-                    if (
-                        Object.prototype.hasOwnProperty.call(
-                            lessons, text
-                        )
-                    ) {
-                        // 避免重复写入相同内容
-                        if (
-                            element.dataset.kebiaoDone !== text
-                        ) {
-                            element.innerHTML = lessons[text];
-                            element.dataset.kebiaoDone = text;
-                            changed++;
-                        }
-                    }
-                });
-
-                return {
-                    found: elements.length,
-                    changed: changed
-                };
+                elements.forEach(element => {const text = element.textContent.trim();if (Object.prototype.hasOwnProperty.call(Lessons, text)) { element.innerHTML = Lessons[text]; }});
             }
 
             function updatePage() {
                 applyTheme();
 
                 const result = replaceLessons();
-
-                console.log(
-                    "[课表] 找到元素:",
-                    result.found,
-                    "本次替换:",
-                    result.changed
-                );
             }
 
             // 首次执行
             updatePage();
 
             // 监听系统主题切换
-            media.addEventListener("change", applyTheme);
+            IsDarkTheme.addEventListener("change", applyTheme);
 
             // 处理 React 等框架稍后渲染课表的情况
             let updateScheduled = false;
@@ -135,27 +212,19 @@ def main(page: ft.Page):
                 subtree: true
             });
 
-            window.__kebiaoCleanup = () => {
-                media.removeEventListener(
-                    "change", applyTheme
-                );
+            window._ListenerCleanup = () => {
+                IsDarkTheme.removeEventListener("change", applyTheme);
                 observer.disconnect();
             };
 
-            console.log("[课表] JavaScript 注入成功");
         })();
         """
-
-        try:
-            await webview.run_javascript(js_code)
-            print("已向 WebView 注入课表脚本")
-        except Exception as ex:
-            print("JavaScript 注入失败:", ex)
+        await webview.run_javascript(JS_Code)
 
     webview = fwv.WebView(
         url="https://yiban.gxnu.edu.cn/yzdx/dean/course",
         expand=True,
-        on_page_ended=on_page_ended,
+        on_page_ended=JS_Injector,
     )
 
     page.add(
@@ -170,6 +239,5 @@ def main(page: ft.Page):
             expand=True,
         )
     )
-
 
 ft.run(main)
