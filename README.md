@@ -8,7 +8,8 @@ Classy，西师课表，是一个基于Flet-webview的课表。
 
 希望通过这个项目改善师大学子的课程查询体验，提升学习效率。
 
-由Qumeyel与LMSLuos制做。欢迎反馈！
+由Qumeyel与LMSLuos制作。
+进步永不停止！欢迎向我们反馈问题、提出新功能、申请添加自己的学校！
 
 ✨ 项目特色
 
@@ -30,9 +31,9 @@ Classy，西师课表，是一个基于Flet-webview的课表。
 
 🚀 如何使用
 
-1. 打开Release页面[现在打开](https://github.com/Qumeyel/Classy/releases)
-2. 下载安装Classy.apk
-3. 打开Classy开始使用
+1. 打开Release页面并下载安装最新版本的Classy.apk；[>>>现在打开](https://github.com/Qumeyel/Classy/releases)
+2. 打开Classy并登录易班账号；
+3.开始使用！
 
 PS:本项目支持Android和ios系统，但是由于未上架App Store，您需要自行下载ios文件夹内的main.py编译并安装
 
