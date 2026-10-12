@@ -1,16 +1,16 @@
 🚀 项目名称
 
-Classy，西师课表，是一个基于webview的课表。
+Classy，西师课表，是一个基于Flet-webview的课表。
 
 📖 项目介绍
 
-这个项目主要用于广西师大易班的课表。
+这个项目适用于广西师大易班的课表。
 
 希望通过这个项目改善师大学子的课程查询体验，提升学习效率。
 
 由Qumeyel与LMSLuos制做。欢迎反馈！
 
-✨ 项目功能
+✨ 项目特色
 
 - 📌 功能一：自动深色模式
 - 📌 功能二：课堂时间显示
@@ -19,26 +19,28 @@ Classy，西师课表，是一个基于webview的课表。
 
 - 编程语言：Python,Javascript
 - 开发工具：VScode
-- 使用框架：python-flet
+- 使用框架：Python-flet
 
 📂 项目结构
 
 项目名称/<br>
+├── ios<br>
 ├── README.md<br>
-├── Classy.py<br>
-└── assets/icon.png<br>
+└── Classy.py<br>
 
 🚀 如何使用
 
-1. 下载或克隆项目。
-2. 安装所需环境(python,flet)
-3. 打包成apk安装到手机使用。
+1. 打开Release页面[现在打开](https://github.com/Qumeyel/Classy/releases)
+2. 下载安装Classy.apk
+3. 打开Classy开始使用
+
+PS:本项目支持Android和ios系统，但是由于未上架App Store，您需要自行下载ios文件夹内的main.py编译并安装
 
 <!--📸 项目截图
 
 -->
 
 📅 更新记录
-
-- 2026-10-10：创建项目。byQumeyel
+- 2026-10-12：完善弹窗界面的深色模式。byQumeyel
 - 2026-10-10：新增了更强大的暗黑模式适配。byLMSLuos
+- 2026-10-10：创建项目。byQumeyel
