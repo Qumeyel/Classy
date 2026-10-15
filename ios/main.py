@@ -1,6 +1,8 @@
 import flet as ft
 import flet_webview as fwv
 
+TARGET_URL = "https://yiban.gxnu.edu.cn/yzdx/dean/course"
+
 def main(page: ft.Page):
     page.padding = 0
     page.spacing = 0
@@ -8,22 +10,16 @@ def main(page: ft.Page):
     async def JS_Injector(e):
         JS_Code = r"""
         (() => {
-            //关闭ios越界滑动
             document.documentElement.style.overscrollBehavior = "none";
             document.body.style.overscrollBehavior = "none";
-            //清除上次的监视器
             if (window._ListenerCleanup) {
                 window._ListenerCleanup();
             }
-            //判断浏览器深浅色
             const IsDarkTheme = window.matchMedia(
                 "(prefers-color-scheme: dark)"
             );
-
-            //深浅色模式切换
             function applyTheme() {
                 const dark = IsDarkTheme.matches;
-                //主界面
                 const app = document.querySelector("#app");
                 if (app) {
                     app.style.setProperty(
@@ -38,7 +34,6 @@ def main(page: ft.Page):
                     "important"
                     );
                 }
-                //课程详情界面
                 const popup = document.querySelector(".van-popup");
                 if (popup) {
                     popup.style.setProperty(
@@ -46,8 +41,6 @@ def main(page: ft.Page):
                     dark ? "#121212" : "#ffffff",
                     "important"
                     );
-
-                    // 同时修改内部文字元素的颜色
                     popup.querySelectorAll("*").forEach(child => {
                         child.style.setProperty(
                         "color",
@@ -65,24 +58,19 @@ def main(page: ft.Page):
                     );
                 }
                 const cellGroup = document.querySelector(".van-cell-group");
-
                 if (cellGroup) {
-                
                     cellGroup.style.setProperty(
                     "background-color",
                     dark ? "#121212" : "#ffffff",
                     "important"
                     );
-
                     const vanCells = cellGroup.querySelectorAll(".van-cell");
-
                     vanCells.forEach(element => {
                         element.style.setProperty(
                             "background-color",
                             dark ? "#121212" : "#ffffff",
                             "important"
                         );
-
                         element.style.setProperty(
                         "color",
                         dark ? "#e0e0e0" : "#111827",
@@ -90,7 +78,6 @@ def main(page: ft.Page):
                         );
                     });
                 }
-
                 const backbutton = document.querySelector(".van-button--default");
                 if(backbutton){
                     backbutton.style.setProperty(
@@ -98,31 +85,26 @@ def main(page: ft.Page):
                     dark ? "#121212" : "#ffffff",
                     "important"
                     );
-
                     backbutton.style.setProperty(
                     "color",
                     dark ? "#e0e0e0" : "#111827",
                     "important"
                     );
                 }
-                //教学周选择界面
                 const van_action_sheet__content = document.querySelector(".van-action-sheet__content");
                 if (van_action_sheet__content) {
                     const item = van_action_sheet__content.querySelectorAll(".van-action-sheet__item");
-
                     item.forEach(element => {
                         element.style.setProperty(
                             "background-color",
                             dark ? "#121212" : "#ffffff",
                             "important"
                         );
-
                         element.style.setProperty(
                         "color",
                         dark ? "#e0e0e0" : "#111827",
                         "important"
                         );
-                        // 同时修改内部文字元素的颜色
                         element.querySelectorAll("*").forEach(child => {
                             child.style.setProperty(
                                 "color",
@@ -139,14 +121,12 @@ def main(page: ft.Page):
                     dark ? "#121212" : "#ffffff",
                     "important"
                     );
-
                     cancelbutton.style.setProperty(
                     "color",
                     dark ? "#e0e0e0" : "#111827",
                     "important"
                     );
                 }
-
                 const sheet__gap = document.querySelector(".van-action-sheet__gap");
                 if(sheet__gap){
                     sheet__gap.style.setProperty(
@@ -156,7 +136,6 @@ def main(page: ft.Page):
                     );
                 }              
             }
-
             const Lessons = {
                 "1": "第1节<br>8:20<br>开始",
                 "2": "第2节<br>9:40<br>结束",
@@ -171,73 +150,77 @@ def main(page: ft.Page):
                 "11": "第11节<br>20:00-20:40",
                 "12": "第12节<br>20:50-21:30"
             };
-
             const selector = ".flex.items-center.justify-center.min-h-10";
-
             function replaceLessons() {
                 const elements = document.querySelectorAll(selector);
-
                 elements.forEach(element => {const text = element.textContent.trim();if (Object.prototype.hasOwnProperty.call(Lessons, text)) { element.innerHTML = Lessons[text]; }});
             }
-
             function updatePage() {
                 applyTheme();
-
                 const result = replaceLessons();
             }
-
-            // 首次执行
             updatePage();
-
-            // 监听系统主题切换
             IsDarkTheme.addEventListener("change", applyTheme);
-
-            // 处理 React 等框架稍后渲染课表的情况
             let updateScheduled = false;
-
             const observer = new MutationObserver(() => {
                 if (updateScheduled) return;
-
                 updateScheduled = true;
-
-                // 合并短时间内的多次 DOM 变化
                 requestAnimationFrame(() => {
                     updateScheduled = false;
                     updatePage();
                 });
             });
-
             observer.observe(document.documentElement, {
                 childList: true,
                 subtree: true
             });
-
             window._ListenerCleanup = () => {
                 IsDarkTheme.removeEventListener("change", applyTheme);
                 observer.disconnect();
             };
-
         })();
         """
-        await webview.run_javascript(JS_Code)
+        await e.control.run_javascript(JS_Code)
 
-    webview = fwv.WebView(
-        url="https://yiban.gxnu.edu.cn/yzdx/dean/course",
+    def create_webview():
+        return fwv.WebView(
+            url=TARGET_URL,
+            expand=True,
+            on_page_ended=JS_Injector,
+        )
+
+    webview_container = ft.Column(
         expand=True,
-        on_page_ended=JS_Injector,
+        spacing=0,
+        controls=[create_webview()],
     )
 
     page.add(
         ft.SafeArea(
-            content=ft.Column(
-                expand=True,
-                spacing=0,
-                controls=[
-                    webview,
-                ],
-            ),
+            content=webview_container,
             expand=True,
         )
     )
+
+    last_state = {"value": None}
+
+    async def reload(e):
+        if e.state == ft.AppLifecycleState.RESUME:
+            wv = webview_container.controls[0]
+
+            try:
+                url = await wv.get_current_url()
+
+                if url is None:
+                    webview_container.controls.clear()
+                    webview_container.controls.append(create_webview())
+                    page.update()
+
+            except Exception as ex:
+                webview_container.controls.clear()
+                webview_container.controls.append(create_webview())
+                page.update()
+
+    page.on_app_lifecycle_state_change = reload
 
 ft.run(main)
